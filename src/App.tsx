@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import 'bulma/css/bulma.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 
@@ -29,39 +29,42 @@ export const App: React.FC = () => {
     setSelectedTodo(null);
   }
 
-  function prepareTodos(
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    todos: Todo[],
-    {
+  const visibleTodos = useCallback(
+    (
       // eslint-disable-next-line @typescript-eslint/no-shadow
-      query,
-      // eslint-disable-next-line @typescript-eslint/no-shadow
-      status,
-    }: { query: string; status: 'all' | 'completed' | 'active' },
-  ) {
-    let preparedTodos = todos;
-    const normalizedQuery = query.trim().toLowerCase();
+      todos: Todo[],
+      {
+        // eslint-disable-next-line @typescript-eslint/no-shadow
+        query,
+        // eslint-disable-next-line @typescript-eslint/no-shadow
+        status,
+      }: { query: string; status: 'all' | 'completed' | 'active' },
+    ) => {
+      let preparedTodos = todos;
+      const normalizedQuery = query.trim().toLowerCase();
 
-    if (normalizedQuery) {
-      preparedTodos = preparedTodos.filter((todo: { title: string }) =>
-        todo.title.toLowerCase().includes(normalizedQuery),
-      );
-    }
+      if (normalizedQuery) {
+        preparedTodos = preparedTodos.filter((todo: { title: string }) =>
+          todo.title.toLowerCase().includes(normalizedQuery),
+        );
+      }
 
-    if (status === 'active') {
-      preparedTodos = preparedTodos.filter(
-        (todo: { completed: boolean }) => todo.completed === false,
-      );
-    }
+      if (status === 'active') {
+        preparedTodos = preparedTodos.filter(
+          (todo: { completed: boolean }) => todo.completed === false,
+        );
+      }
 
-    if (status === 'completed') {
-      preparedTodos = preparedTodos.filter(
-        (todo: { completed: boolean }) => todo.completed === true,
-      );
-    }
+      if (status === 'completed') {
+        preparedTodos = preparedTodos.filter(
+          (todo: { completed: boolean }) => todo.completed === true,
+        );
+      }
 
-    return preparedTodos;
-  }
+      return preparedTodos;
+    },
+    [todos, query, status],
+  );
 
   useEffect(() => {
     getTodos()
@@ -94,7 +97,7 @@ export const App: React.FC = () => {
               {loading && <Loader />}
               {!loading && !error && todos.length > 0 && (
                 <TodoList
-                  todos={prepareTodos(todos, { query, status })}
+                  todos={visibleTodos(todos, { query, status })}
                   onShow={openModal}
                   selectedTodo={selectedTodo}
                 />
