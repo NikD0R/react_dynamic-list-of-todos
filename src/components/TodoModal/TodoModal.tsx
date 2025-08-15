@@ -13,7 +13,5 @@ export const TodoModal: React.FC<Props> = ({
   selectedTodo,
   onClose,
 }) => {
-  return (
-    <>{modal === true && <ModalCard todo={selectedTodo} onClose={onClose} />}</>
-  );
+  return <>{modal && <ModalCard todo={selectedTodo} onClose={onClose} />}</>;
 };

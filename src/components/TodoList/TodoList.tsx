@@ -42,9 +42,10 @@ export const TodoList: React.FC<Props> = ({ todos, onShow, selectedTodo }) => {
             </td>
             <td className="is-vcentered is-expanded">
               <p
-                className={
-                  todo.completed ? 'has-text-success' : 'has-text-danger'
-                }
+                className={classNames({
+                  'has-text-success': todo.completed,
+                  'has-text-danger': !todo.completed,
+                })}
               >
                 {todo.title}
               </p>
@@ -54,9 +55,7 @@ export const TodoList: React.FC<Props> = ({ todos, onShow, selectedTodo }) => {
                 data-cy="selectButton"
                 className="button"
                 type="button"
-                onClick={() => {
-                  onShow(todo);
-                }}
+                onClick={() => onShow(todo)}
               >
                 <span className="icon">
                   {todo.id === selectedTodo?.id ? (
